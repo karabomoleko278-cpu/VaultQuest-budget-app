@@ -43,8 +43,10 @@ class AddEntryActivity : AppCompatActivity() {
 
     private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            binding.photoPreview.visibility = View.VISIBLE
-            binding.photoPreview.setImageURI(Uri.fromFile(File(photoPath!!)))
+            photoPath?.let { path ->
+                binding.photoPreview.visibility = View.VISIBLE
+                binding.photoPreview.setImageURI(Uri.fromFile(File(path)))
+            }
         }
     }
 
@@ -64,14 +66,38 @@ class AddEntryActivity : AppCompatActivity() {
         userId = intent.getLongExtra("USER_ID", -1)
         if (userId == -1L) finish()
 
-        setupPickers()
-        loadCategories()
+        if (savedInstanceState != null) {
+            photoPath = savedInstanceState.getString("PHOTO_PATH")
+            photoPath?.let { path ->
+                val file = File(path)
+                if (file.exists()) {
+                    binding.photoPreview.visibility = View.VISIBLE
+                    binding.photoPreview.setImageURI(Uri.fromFile(file))
+                }
+            }
+        }
 
-        binding.btnBack.setOnClickListener { 
+        binding.btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
         }
+
+        setupPickers()
+        loadCategories()
+
+        binding.btnTakePhoto.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent()
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
         binding.btnSave.setOnClickListener { saveEntry() }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("PHOTO_PATH", photoPath)
     }
 
     private fun setupPickers() {

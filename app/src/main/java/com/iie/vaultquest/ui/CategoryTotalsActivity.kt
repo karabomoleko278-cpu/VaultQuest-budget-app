@@ -28,6 +28,11 @@ class CategoryTotalsActivity : AppCompatActivity() {
 
         if (userId == -1L) finish()
 
+        binding.btnBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        }
+
         val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         binding.periodText.text = "${sdf.format(Date(start))} - ${sdf.format(Date(end))}"
 

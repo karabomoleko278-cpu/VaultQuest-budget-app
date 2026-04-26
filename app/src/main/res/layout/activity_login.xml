@@ -4,31 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/surface">
+    android:background="@color/primary">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp">
+        android:padding="32dp">
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_marginTop="48dp"
-            android:src="@drawable/logo"
+            android:src="@drawable/ic_vault"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/secondary" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="VaultQuest"
             android:textColor="@color/secondary"
-            android:textSize="32sp"
-            android:textStyle="bold"
+            android:textSize="36sp"
+            android:fontFamily="sans-serif-black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/logo" />
@@ -37,41 +39,40 @@
             android:id="@+id/subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Secure your financial future"
+            android:text="Your Secure Financial Vault"
             android:textColor="@color/text_secondary"
-            android:textSize="14sp"
+            android:textSize="16sp"
+            android:alpha="0.7"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/usernameLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/PremiumTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
             android:hint="Username"
-            app:boxStrokeColor="@color/secondary"
-            app:hintTextColor="@color/secondary"
             app:layout_constraintTop_toBottomOf="@id/subtitle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/on_surface" />
+                android:textColor="@color/white"
+                android:paddingVertical="20dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/PremiumTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="Password"
-            app:boxStrokeColor="@color/secondary"
-            app:hintTextColor="@color/secondary"
             app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/text_secondary"
             app:layout_constraintTop_toBottomOf="@id/usernameLayout">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -79,29 +80,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:textColor="@color/on_surface" />
+                android:textColor="@color/white"
+                android:paddingVertical="20dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnLogin"
+            style="@style/PremiumButton"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="32dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="40dp"
             android:backgroundTint="@color/secondary"
-            android:text="Login"
-            android:textAllCaps="true"
+            android:text="Login to Vault"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            app:cornerRadius="12dp"
             app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
 
         <TextView
             android:id="@+id/btnRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Don't have an account? Register"
+            android:layout_marginTop="24dp"
+            android:text="New member? Create account"
             android:textColor="@color/secondary"
+            android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnLogin" />

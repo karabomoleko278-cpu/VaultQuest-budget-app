@@ -47,6 +47,7 @@ class EntryListActivity : AppCompatActivity() {
 
         binding.btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
         }
 
         binding.btnStartDate.setOnClickListener {
@@ -64,6 +65,7 @@ class EntryListActivity : AppCompatActivity() {
                 putExtra("END_DATE", endDate.timeInMillis)
             }
             startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
     }
 

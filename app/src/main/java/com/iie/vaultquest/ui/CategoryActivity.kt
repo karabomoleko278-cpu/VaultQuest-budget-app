@@ -24,6 +24,11 @@ class CategoryActivity : AppCompatActivity() {
         userId = intent.getLongExtra("USER_ID", -1)
         if (userId == -1L) finish()
 
+        binding.btnBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        }
+
         binding.categoryList.layoutManager = LinearLayoutManager(this)
         
         observeCategories()

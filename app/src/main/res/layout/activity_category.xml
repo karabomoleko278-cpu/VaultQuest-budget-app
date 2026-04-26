@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:padding="16dp">
+    android:background="@color/primary"
+    android:padding="20dp">
 
     <ImageButton
         android:id="@+id/btnBack"
@@ -20,40 +20,40 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:text="Categories"
         android:textColor="@color/secondary"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:textSize="26sp"
+        android:fontFamily="sans-serif-black"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toEndOf="@id/btnBack"
         app:layout_constraintTop_toTopOf="@id/btnBack" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/categoryInputLayout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        style="@style/PremiumTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="12dp"
         android:hint="Category Name"
-        app:boxStrokeColor="@color/secondary"
-        app:hintTextColor="@color/secondary"
         app:layout_constraintEnd_toStartOf="@id/btnAdd"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title">
+        app:layout_constraintTop_toBottomOf="@id/btnBack">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/categoryName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:paddingVertical="16dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnAdd"
+        style="@style/PremiumButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:backgroundTint="@color/secondary"
         android:text="Add"
         android:textColor="@color/black"

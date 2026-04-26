@@ -6,151 +6,170 @@
     android:background="@color/primary"
     android:fillViewport="true">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="24dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/secondary" />
+
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_revert"
-                app:tint="@color/secondary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="New Expense"
-                android:textColor="@color/secondary"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:layout_marginStart="12dp"
+            android:text="New Entry"
+            android:textColor="@color/secondary"
+            android:textSize="26sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintBottom_toBottomOf="@id/btnBack"
+            app:layout_constraintStart_toEndOf="@id/btnBack"
+            app:layout_constraintTop_toTopOf="@id/btnBack" />
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:id="@+id/amountLayout"
+            style="@style/PremiumTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:hint="Amount (R)"
-            app:boxStrokeColor="@color/secondary"
-            app:hintTextColor="@color/secondary">
+            app:layout_constraintTop_toBottomOf="@id/btnBack">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:paddingVertical="20dp"
+                android:textSize="18sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:id="@+id/descriptionLayout"
+            style="@style/PremiumTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="Description"
-            app:boxStrokeColor="@color/secondary"
-            app:hintTextColor="@color/secondary">
+            app:layout_constraintTop_toBottomOf="@id/amountLayout">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:paddingVertical="20dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/categoryLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Category"
-            android:textColor="@color/text_secondary" />
+            android:layout_marginTop="24dp"
+            android:text="CATEGORY"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:letterSpacing="0.1"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/descriptionLayout" />
+
         <Spinner
             android:id="@+id/categorySpinner"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/card_bg"
-            android:padding="8dp" />
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/card_premium"
+            android:paddingHorizontal="16dp"
+            app:layout_constraintTop_toBottomOf="@id/categoryLabel" />
 
         <Button
             android:id="@+id/btnPickDate"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/PremiumButton.Secondary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Pick Date"
-            android:textColor="@color/secondary"
-            app:strokeColor="@color/secondary" />
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:text="Set Date"
+            app:layout_constraintTop_toBottomOf="@id/categorySpinner" />
 
         <LinearLayout
+            android:id="@+id/timeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/btnPickDate">
             <Button
                 android:id="@+id/btnPickStartTime"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/PremiumButton.Secondary"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="4dp"
-                android:text="Start Time"
-                android:textColor="@color/secondary"
-                app:strokeColor="@color/secondary" />
+                android:layout_marginEnd="6dp"
+                android:text="Start Time" />
             <Button
                 android:id="@+id/btnPickEndTime"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/PremiumButton.Secondary"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
-                android:layout_marginStart="4dp"
-                android:text="End Time"
-                android:textColor="@color/secondary"
-                app:strokeColor="@color/secondary" />
+                android:layout_marginStart="6dp"
+                android:text="End Time" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/dateTimeSummary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Date/Time not set"
-            android:textColor="@color/white" />
+            android:layout_marginTop="12dp"
+            android:text="No date/time selected"
+            android:textColor="@color/white"
+            android:alpha="0.6"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timeLayout" />
 
         <Button
             android:id="@+id/btnTakePhoto"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/PremiumButton.Secondary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="24dp"
-            android:text="Take Photograph (Optional)"
-            app:icon="@android:drawable/ic_menu_camera" />
+            android:text="Attach Receipt"
+            app:icon="@android:drawable/ic_menu_camera"
+            app:iconGravity="textStart"
+            app:iconPadding="12dp"
+            app:iconSize="24dp"
+            app:layout_constraintTop_toBottomOf="@id/dateTimeSummary" />
 
         <ImageView
             android:id="@+id/photoPreview"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/btnTakePhoto" />
 
         <Button
             android:id="@+id/btnSave"
+            style="@style/PremiumButton"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="32dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="40dp"
             android:backgroundTint="@color/secondary"
-            android:text="Save Entry"
+            android:text="Secure to Vault"
             android:textColor="@color/black"
-            app:cornerRadius="12dp" />
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/photoPreview"
+            app:layout_goneMarginTop="40dp" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
