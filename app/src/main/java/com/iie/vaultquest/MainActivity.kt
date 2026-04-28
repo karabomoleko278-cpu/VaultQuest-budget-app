@@ -66,6 +66,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, GoalSettingsActivity::class.java).putExtra("USER_ID", userId))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
+        binding.btnReports.setOnClickListener {
+            startActivity(Intent(this, ReportsActivity::class.java).putExtra("USER_ID", userId))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
     }
 
     private fun updateDashboard() {
@@ -74,22 +78,20 @@ class MainActivity : AppCompatActivity() {
                 db.appDao().getEntriesForUser(userId),
                 db.appDao().getGoalsForUser(userId)
             ) { entries, goalsList ->
-                Pair(entries, goalsList.firstOrNull())
-            }.collect { (entries, goals) ->
-                val total = entries.filter { isCurrentMonth(it.date) }.sumOf { it.amount }
-                binding.totalSpent.text = currencyFormat.format(total)
+            ).collect { (entries, goals) ->
+                val totalSpent = entries.filter { isCurrentMonth(it.date) }.sumOf { it.amount }
+                binding.totalSpent.text = currencyFormat.format(totalSpent)
 
-                if (goals != null) {
-                    val max = goals.maxGoal
-                    val min = goals.minGoal
-                    
+                val totalBudget = goals.sumOf { it.amount }
+
+                if (totalBudget > 0) {
                     val status = when {
-                        total > max -> "📉 Over budget! Save more next month."
-                        total < min -> "🏆 Savings Master: Under goal!"
+                        totalSpent > totalBudget -> "📉 Over budget! Save more next month."
+                        totalSpent < totalBudget * 0.5 -> "🏆 Savings Master: Under goal!"
                         else -> "⭐ On Track: Budgeting like a pro!"
                     }
                     binding.goalStatus.text = status
-                    binding.goalStatus.setTextColor(if (total > max) getColor(R.color.error) else getColor(R.color.secondary))
+                    binding.goalStatus.setTextColor(if (totalSpent > totalBudget) getColor(R.color.error) else getColor(R.color.secondary))
                 } else {
                     binding.goalStatus.text = "Goal: Not Set"
                 }

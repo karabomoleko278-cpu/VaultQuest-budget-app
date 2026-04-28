@@ -41,20 +41,22 @@ class AddEntryActivity : AppCompatActivity() {
     private var endTime = ""
     private var photoPath: String? = null
 
-    private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            photoPath?.let { path ->
+            val uri: Uri? = result.data?.data
+            uri?.let {
+                photoPath = it.toString()
                 binding.photoPreview.visibility = View.VISIBLE
-                binding.photoPreview.setImageURI(Uri.fromFile(File(path)))
+                binding.photoPreview.setImageURI(it)
             }
         }
     }
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            dispatchTakePictureIntent()
+            openGallery()
         } else {
-            Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -69,11 +71,8 @@ class AddEntryActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             photoPath = savedInstanceState.getString("PHOTO_PATH")
             photoPath?.let { path ->
-                val file = File(path)
-                if (file.exists()) {
-                    binding.photoPreview.visibility = View.VISIBLE
-                    binding.photoPreview.setImageURI(Uri.fromFile(file))
-                }
+                binding.photoPreview.visibility = View.VISIBLE
+                binding.photoPreview.setImageURI(Uri.parse(path))
             }
         }
 
@@ -86,10 +85,18 @@ class AddEntryActivity : AppCompatActivity() {
         loadCategories()
 
         binding.btnTakePhoto.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntent()
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
+                    openGallery()
+                } else {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                }
             } else {
-                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    openGallery()
+                } else {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
             }
         }
         binding.btnSave.setOnClickListener { saveEntry() }
@@ -111,21 +118,15 @@ class AddEntryActivity : AppCompatActivity() {
         binding.btnPickStartTime.setOnClickListener {
             TimePickerDialog(this, { _, h, min ->
                 startTime = String.format("%02d:%02d", h, min)
+                endTime = startTime // Simplifying: just use one time
                 updateSummary()
             }, 12, 0, true).show()
-        }
-
-        binding.btnPickEndTime.setOnClickListener {
-            TimePickerDialog(this, { _, h, min ->
-                endTime = String.format("%02d:%02d", h, min)
-                updateSummary()
-            }, 13, 0, true).show()
         }
     }
 
     private fun updateSummary() {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        binding.dateTimeSummary.text = "Date: ${sdf.format(selectedDate.time)} | Start: $startTime | End: $endTime"
+        binding.dateTimeSummary.text = "${sdf.format(selectedDate.time)} | $startTime"
     }
 
     private fun loadCategories() {
@@ -147,17 +148,10 @@ class AddEntryActivity : AppCompatActivity() {
         }
     }
 
-    private fun dispatchTakePictureIntent() {
-        Log.d(TAG, "Dispatching camera intent")
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val file = File.createTempFile("IMG_${System.currentTimeMillis()}", ".jpg", storageDir)
-        photoPath = file.absolutePath
-        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
-        
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-            putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        }
-        takePhotoLauncher.launch(intent)
+    private fun openGallery() {
+        Log.d(TAG, "Opening gallery")
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        pickImageLauncher.launch(intent)
     }
 
     private fun saveEntry() {
@@ -167,9 +161,9 @@ class AddEntryActivity : AppCompatActivity() {
 
         Log.d(TAG, "Saving entry: $desc, Amount: $amountStr")
 
-        if (amountStr.isEmpty() || desc.isEmpty() || catIndex == -1 || startTime.isEmpty() || endTime.isEmpty()) {
+        if (amountStr.isEmpty() || desc.isEmpty() || catIndex == -1 || startTime.isEmpty()) {
             Log.w(TAG, "Save failed: Validation error")
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show()
             return
         }
 

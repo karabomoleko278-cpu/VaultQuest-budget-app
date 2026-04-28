@@ -60,17 +60,25 @@ data class Entry(
 
 @Entity(
     tableName = "goals",
-    foreignKeys = [ForeignKey(
-        entity = User::class,
-        parentColumns = ["id"],
-        childColumns = ["userId"],
-        onDelete = ForeignKey.CASCADE
-    )],
-    indices = [Index(value = ["userId"])]
+    foreignKeys = [
+        ForeignKey(
+            entity = User::class,
+            parentColumns = ["id"],
+            childColumns = ["userId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Category::class,
+            parentColumns = ["id"],
+            childColumns = ["categoryId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["userId"]), Index(value = ["categoryId"])]
 )
 data class Goal(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val userId: Long,
-    val minGoal: Double,
-    val maxGoal: Double
+    val categoryId: Long,
+    val amount: Double
 )

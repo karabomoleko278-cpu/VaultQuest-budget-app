@@ -38,4 +38,7 @@ interface AppDao {
 
     @Query("SELECT * FROM goals WHERE userId = :userId")
     fun getGoalsForUser(userId: Long): Flow<List<Goal>>
+
+    @Query("SELECT * FROM goals WHERE userId = :userId AND categoryId = :categoryId LIMIT 1")
+    suspend fun getGoalForCategory(userId: Long, categoryId: Long): Goal?
 }

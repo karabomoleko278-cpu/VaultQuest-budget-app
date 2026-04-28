@@ -33,6 +33,7 @@
         <activity android:name=".ui.EntryListActivity" />
         <activity android:name=".ui.CategoryTotalsActivity" />
         <activity android:name=".ui.GoalSettingsActivity" />
+        <activity android:name=".ui.ReportsActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

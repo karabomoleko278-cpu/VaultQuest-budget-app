@@ -2,18 +2,24 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="vault_blue">#0061E0</color>
+    <color name="vault_light_bg">#F2F4F7</color>
+    <color name="vault_card_bg">#FFFFFF</color>
+
+    <color name="vault_green">#10B981</color>
+    <color name="vault_red">#EF4444</color>
+    <color name="vault_text_primary">#111827</color>
+    <color name="vault_text_secondary">#6B7280</color>
     
-    <!-- Premium Palette (Black & Yellow) -->
-    <color name="primary">#0D1117</color> <!-- Deep Black -->
-    <color name="primary_variant">#000000</color>
-    <color name="secondary">#FFC107</color> <!-- Gold/Amber -->
-    <color name="background">#0D1117</color> <!-- Dark Background -->
-    <color name="surface">#161B22</color> <!-- Card Background -->
-    <color name="on_surface">#E6EDF3</color> <!-- Text on dark -->
-    <color name="on_primary">#FFFFFF</color>
-    <color name="error">#F85149</color>
-    
-    <color name="text_secondary">#8B949E</color>
-    <color name="divider">#30363D</color>
-    <color name="blue_background">#0D1117</color>
+    <!-- Dark Mode Overrides -->
+    <color name="dark_background">#0F172A</color>
+    <color name="dark_surface">#1E293B</color>
+    <color name="dark_on_surface">#F8FAFC</color>
+
+    <!-- Legacy Compatibility -->
+    <color name="primary">#0061E0</color>
+    <color name="secondary">#0061E0</color>
+    <color name="error">#EF4444</color>
+    <color name="divider">#E5E7EB</color>
 </resources>
