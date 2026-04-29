@@ -34,12 +34,21 @@ class AddEntryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEntryBinding
     private val db by lazy { AppDatabase.getDatabase(this) }
     private var userId: Long = -1
+    private var isIncome: Boolean = false
     private var categories = listOf<Category>()
     
     private var selectedDate = Calendar.getInstance()
     private var startTime = ""
     private var endTime = ""
     private var photoPath: String? = null
+
+    private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // photoPath is already set from the URI we provided to the intent
+            binding.photoPreview.visibility = View.VISIBLE
+            binding.photoPreview.setImageURI(Uri.parse(photoPath))
+        }
+    }
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -54,9 +63,9 @@ class AddEntryActivity : AppCompatActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            openGallery()
+            capturePhoto()
         } else {
-            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -66,7 +75,11 @@ class AddEntryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         userId = intent.getLongExtra("USER_ID", -1)
+        isIncome = intent.getBooleanExtra("IS_INCOME", false)
+        
         if (userId == -1L) finish()
+
+        setupUIForType()
 
         if (savedInstanceState != null) {
             photoPath = savedInstanceState.getString("PHOTO_PATH")
@@ -85,21 +98,29 @@ class AddEntryActivity : AppCompatActivity() {
         loadCategories()
 
         binding.btnTakePhoto.setOnClickListener {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-                    openGallery()
-                } else {
-                    requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-                }
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                capturePhoto()
             } else {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    openGallery()
-                } else {
-                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }
         binding.btnSave.setOnClickListener { saveEntry() }
+    }
+
+    private fun setupUIForType() {
+        if (isIncome) {
+            binding.headerTitle.text = "Add Income"
+            binding.description.hint = "Income source"
+            binding.btnSave.text = "Save Income"
+            binding.lblAmount.text = "Income Amount"
+            binding.lblDescription.text = "Source"
+        } else {
+            binding.headerTitle.text = "Add Expense"
+            binding.description.hint = "Expense title"
+            binding.btnSave.text = "Save Expense"
+            binding.lblAmount.text = "Expense Amount"
+            binding.lblDescription.text = "Title"
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -134,7 +155,11 @@ class AddEntryActivity : AppCompatActivity() {
             db.appDao().getCategoriesForUser(userId).collect { list ->
                 if (list.isEmpty()) {
                     // Predefined categories for a better start
-                    val defaults = listOf("Food", "Transport", "Rent", "Groceries", "Entertainment", "Savings", "Emergency")
+                    val defaults = if (isIncome) {
+                        listOf("Salary", "Freelance", "Gift", "Allowance", "Other Income")
+                    } else {
+                        listOf("Food", "Transport", "Rent", "Groceries", "Entertainment", "Savings", "Emergency")
+                    }
                     defaults.forEach { 
                         db.appDao().insertCategory(Category(userId = userId, name = it))
                     }
@@ -148,6 +173,16 @@ class AddEntryActivity : AppCompatActivity() {
         }
     }
 
+    private fun capturePhoto() {
+        val photoFile = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_${System.currentTimeMillis()}.jpg")
+        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", photoFile)
+        photoPath = photoFile.absolutePath
+        
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+        takePhotoLauncher.launch(intent)
+    }
+
     private fun openGallery() {
         Log.d(TAG, "Opening gallery")
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -159,7 +194,7 @@ class AddEntryActivity : AppCompatActivity() {
         val desc = binding.description.text.toString()
         val catIndex = binding.categorySpinner.selectedItemPosition
 
-        Log.d(TAG, "Saving entry: $desc, Amount: $amountStr")
+        Log.d(TAG, "Saving entry: $desc, Amount: $amountStr, isIncome: $isIncome")
 
         if (amountStr.isEmpty() || desc.isEmpty() || catIndex == -1 || startTime.isEmpty()) {
             Log.w(TAG, "Save failed: Validation error")
@@ -177,11 +212,13 @@ class AddEntryActivity : AppCompatActivity() {
                     endTime = endTime,
                     description = desc,
                     amount = amountStr.toDouble(),
-                    photoPath = photoPath
+                    photoPath = photoPath,
+                    isIncome = isIncome
                 )
                 db.appDao().insertEntry(entry)
                 Log.i(TAG, "Entry saved successfully to RoomDB")
-                Toast.makeText(this@AddEntryActivity, "💰 Ka-ching! Entry saved!", Toast.LENGTH_LONG).show()
+                val msg = if (isIncome) "💰 Money in! Saved!" else "💸 Ka-ching! Expense saved!"
+                Toast.makeText(this@AddEntryActivity, msg, Toast.LENGTH_LONG).show()
                 finish()
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving entry: ${e.message}")

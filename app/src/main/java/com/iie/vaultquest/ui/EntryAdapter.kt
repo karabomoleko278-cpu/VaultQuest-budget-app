@@ -34,24 +34,31 @@ class EntryAdapter(
 
     override fun onBindViewHolder(holder: EntryViewHolder, position: Int) {
         val entry = entries[position]
+        val context = holder.itemView.context
+        val format = NumberFormat.getCurrencyInstance(Locale("en", "ZA"))
+
         holder.desc.text = entry.description
         val categoryName = categories[entry.categoryId]?.name ?: "Uncategorized"
-        holder.cat.text = "Category: $categoryName"
-        holder.amount.text = "R ${String.format("%.2f", entry.amount)}"
-        holder.time.text = "${entry.startTime} - ${entry.endTime}"
+        holder.cat.text = categoryName
         
-        // Simple gamification: change color based on amount
-        if (entry.amount > 1000) {
-            holder.amount.setTextColor(android.graphics.Color.RED)
+        if (entry.isIncome) {
+            holder.amount.text = "+ ${format.format(entry.amount)}"
+            holder.amount.setTextColor(context.getColor(R.color.vault_green))
         } else {
-            holder.amount.setTextColor(holder.itemView.context.getColor(R.color.secondary))
+            holder.amount.text = "- ${format.format(entry.amount)}"
+            holder.amount.setTextColor(context.getColor(R.color.vault_red))
         }
+        
+        holder.time.text = entry.startTime
 
         if (entry.photoPath != null) {
-            holder.icon.visibility = View.VISIBLE
-            holder.icon.setImageURI(Uri.fromFile(File(entry.photoPath)))
+            try {
+                holder.icon.setImageURI(Uri.fromFile(File(entry.photoPath)))
+            } catch (e: Exception) {
+                holder.icon.setImageResource(if (entry.isIncome) R.drawable.ic_vault else R.drawable.ic_receipt)
+            }
         } else {
-            holder.icon.visibility = View.GONE
+            holder.icon.setImageResource(if (entry.isIncome) R.drawable.ic_vault else R.drawable.ic_receipt)
         }
     }
 

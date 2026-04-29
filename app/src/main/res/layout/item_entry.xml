@@ -3,23 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="8dp"
-    app:cardBackgroundColor="@color/surface"
-    app:cardCornerRadius="12dp">
+    android:layout_marginVertical="4dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="12dp"
+        android:gravity="center_vertical">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgEntry"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:scaleType="centerCrop"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="centerInside"
             android:src="@drawable/ic_receipt"
-            app:tint="@color/secondary" />
+            android:background="?attr/colorSurfaceVariant"
+            android:padding="8dp"
+            app:shapeAppearanceOverlay="@style/CircleImage"
+            app:tint="@color/vault_blue" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -33,8 +38,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Expense Description"
-                android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -42,18 +47,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Category"
-                android:textColor="@color/secondary"
-                android:textSize="14sp"
-                android:alpha="0.8" />
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/txtTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10:00 - 11:00"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:alpha="0.6" />
+                android:text="10:00"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="11sp"
+                android:alpha="0.7" />
         </LinearLayout>
 
         <TextView
@@ -61,8 +65,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="R 0.00"
-            android:textColor="@color/secondary"
-            android:textSize="20sp"
+            android:textColor="@color/vault_blue"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>

@@ -55,7 +55,8 @@ data class Entry(
     val endTime: String,
     val description: String,
     val amount: Double,
-    val photoPath: String? = null
+    val photoPath: String? = null,
+    val isIncome: Boolean = false
 )
 
 @Entity(
@@ -79,6 +80,8 @@ data class Entry(
 data class Goal(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val userId: Long,
-    val categoryId: Long,
-    val amount: Double
+    val categoryId: Long = 0,
+    val amount: Double = 0.0,
+    val minGoal: Double = 0.0,
+    val maxGoal: Double = 0.0
 )

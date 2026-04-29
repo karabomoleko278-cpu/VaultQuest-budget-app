@@ -7,6 +7,10 @@
 
     <style name="Theme.VaultQuest" parent="Base.Theme.VaultQuest" />
 
+    <style name="CircleImage">
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="PremiumCard" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@color/vault_card_bg</item>
         <item name="cardCornerRadius">24dp</item>

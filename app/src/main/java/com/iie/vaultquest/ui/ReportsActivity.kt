@@ -46,12 +46,16 @@ class ReportsActivity : AppCompatActivity() {
     }
 
     private fun setupChart() {
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true)
+        val textColor = typedValue.data
+
         binding.pieChart.apply {
             setUsePercentValues(true)
             description.isEnabled = false
             isDrawHoleEnabled = true
             setHoleColor(Color.TRANSPARENT)
-            setTransparentCircleColor(Color.WHITE)
+            setTransparentCircleColor(Color.GRAY)
             setTransparentCircleAlpha(110)
             holeRadius = 58f
             transparentCircleRadius = 61f
@@ -60,7 +64,7 @@ class ReportsActivity : AppCompatActivity() {
             isRotationEnabled = true
             isHighlightPerTapEnabled = true
             legend.isEnabled = true
-            legend.textColor = Color.GRAY
+            legend.textColor = textColor
         }
     }
 
@@ -127,6 +131,10 @@ class ReportsActivity : AppCompatActivity() {
     }
 
     private fun updateChart(spendingData: Map<String, Double>, totalText: String) {
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true)
+        val textColor = typedValue.data
+
         val pieEntries = ArrayList<PieEntry>()
         spendingData.forEach { (category, amount) ->
             pieEntries.add(PieEntry(amount.toFloat(), category))
@@ -150,7 +158,7 @@ class ReportsActivity : AppCompatActivity() {
 
         binding.pieChart.data = data
         binding.pieChart.centerText = "Spent\n$totalText"
-        binding.pieChart.setCenterTextColor(Color.GRAY)
+        binding.pieChart.setCenterTextColor(textColor)
         binding.pieChart.invalidate()
     }
 }

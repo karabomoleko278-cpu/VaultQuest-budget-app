@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        binding.welcomeText.text = "Welcome, $username"
+        binding.welcomeText.text = username
 
         setupClickListeners()
         updateDashboard()
@@ -50,25 +50,40 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
-        binding.btnAddEntry.setOnClickListener {
-            startActivity(Intent(this, AddEntryActivity::class.java).putExtra("USER_ID", userId))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        binding.btnAddExpense.setOnClickListener {
+            startActivity(Intent(this, AddEntryActivity::class.java).apply {
+                putExtra("USER_ID", userId)
+                putExtra("IS_INCOME", false)
+            })
         }
-        binding.btnViewEntries.setOnClickListener {
+        binding.btnAddIncome.setOnClickListener {
+            startActivity(Intent(this, AddEntryActivity::class.java).apply {
+                putExtra("USER_ID", userId)
+                putExtra("IS_INCOME", true)
+            })
+        }
+        
+        binding.tabHome.setOnClickListener { /* Already here */ }
+        binding.tabBudget.setOnClickListener {
             startActivity(Intent(this, EntryListActivity::class.java).putExtra("USER_ID", userId))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
-        binding.btnCategories.setOnClickListener {
-            startActivity(Intent(this, CategoryActivity::class.java).putExtra("USER_ID", userId))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        }
-        binding.btnGoals.setOnClickListener {
-            startActivity(Intent(this, GoalSettingsActivity::class.java).putExtra("USER_ID", userId))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        }
-        binding.btnReports.setOnClickListener {
+        binding.tabReports.setOnClickListener {
             startActivity(Intent(this, ReportsActivity::class.java).putExtra("USER_ID", userId))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
+        binding.tabProfile.setOnClickListener {
+            startActivity(Intent(this, GoalSettingsActivity::class.java).putExtra("USER_ID", userId))
+        }
+        
+        binding.btnViewAll.setOnClickListener {
+            startActivity(Intent(this, EntryListActivity::class.java).putExtra("USER_ID", userId))
+        }
+
+        binding.btnManageGoals.setOnClickListener {
+            startActivity(Intent(this, GoalSettingsActivity::class.java).putExtra("USER_ID", userId))
+        }
+
+        binding.btnSetGoalNow.setOnClickListener {
+            startActivity(Intent(this, GoalSettingsActivity::class.java).putExtra("USER_ID", userId))
         }
     }
 
@@ -76,25 +91,41 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             combine(
                 db.appDao().getEntriesForUser(userId),
-                db.appDao().getGoalsForUser(userId)
-            ) { entries, goalsList ->
-            ).collect { (entries, goals) ->
-                val totalSpent = entries.filter { isCurrentMonth(it.date) }.sumOf { it.amount }
-                binding.totalSpent.text = currencyFormat.format(totalSpent)
+                db.appDao().getGoalsForUser(userId),
+                db.appDao().getCategoriesForUser(userId)
+            ) { entries, goals, categories ->
+                Triple(entries, goals, categories)
+            }.collect { (entries, goals, categories) ->
+                val currentMonthEntries = entries.filter { isCurrentMonth(it.date) }
+                
+                val totalIncome = currentMonthEntries.filter { it.isIncome }.sumOf { it.amount }
+                val totalExpenses = currentMonthEntries.filter { !it.isIncome }.sumOf { it.amount }
+                val savings = totalIncome - totalExpenses
+
+                binding.totalSpent.text = currencyFormat.format(totalIncome - totalExpenses)
+                binding.incomeValue.text = currencyFormat.format(totalIncome)
+                binding.expensesValue.text = currencyFormat.format(totalExpenses)
+                binding.savingsValue.text = currencyFormat.format(savings)
 
                 val totalBudget = goals.sumOf { it.amount }
 
                 if (totalBudget > 0) {
                     val status = when {
-                        totalSpent > totalBudget -> "📉 Over budget! Save more next month."
-                        totalSpent < totalBudget * 0.5 -> "🏆 Savings Master: Under goal!"
+                        totalExpenses > totalBudget -> "📉 Over budget! Save more next month."
+                        totalExpenses < totalBudget * 0.5 -> "🏆 Savings Master: Under goal!"
                         else -> "⭐ On Track: Budgeting like a pro!"
                     }
                     binding.goalStatus.text = status
-                    binding.goalStatus.setTextColor(if (totalSpent > totalBudget) getColor(R.color.error) else getColor(R.color.secondary))
+                    binding.dashboardGoalText.text = "Monthly Budget: ${currencyFormat.format(totalBudget)}\nCurrently spent: ${currencyFormat.format(totalExpenses)}"
                 } else {
                     binding.goalStatus.text = "Goal: Not Set"
+                    binding.dashboardGoalText.text = "No monthly budget set. Start tracking to save more!"
                 }
+
+                // Update recent transactions
+                val recent = entries.sortedByDescending { it.date }.take(5)
+                val catMap = categories.associateBy { it.id }
+                binding.recentTransactionsList.adapter = EntryAdapter(recent, catMap)
             }
         }
     }

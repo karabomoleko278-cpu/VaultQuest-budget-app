@@ -27,7 +27,7 @@ class BudgetAdapter(private val budgets: List<BudgetProgress>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.id.item_budget, parent, false)
+            .inflate(R.layout.item_budget, parent, false)
         return BudgetViewHolder(view)
     }
 

@@ -12,14 +12,12 @@
     <color name="vault_text_primary">#111827</color>
     <color name="vault_text_secondary">#6B7280</color>
     
-    <!-- Dark Mode Overrides -->
-    <color name="dark_background">#0F172A</color>
-    <color name="dark_surface">#1E293B</color>
-    <color name="dark_on_surface">#F8FAFC</color>
-
-    <!-- Legacy Compatibility -->
     <color name="primary">#0061E0</color>
     <color name="secondary">#0061E0</color>
     <color name="error">#EF4444</color>
     <color name="divider">#E5E7EB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="dark_background">#0F172A</color>
+    <color name="dark_surface">#1E293B</color>
 </resources>
